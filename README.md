@@ -5,13 +5,12 @@
 [![Go](https://github.com/jpenagg/govee/actions/workflows/go.yml/badge.svg)](https://github.com/jpenagg/govee/actions/workflows/go.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/jpenagg/govee.svg)](https://pkg.go.dev/github.com/jpenagg/govee)
 
-Control your Govee lights from Go — fully typed, automatically validated, no hardcoded keys.
+Control your Govee lights from Go — fully typed and automatically validated.
 
 ### Features
 - Full device discovery with human-readable names
 - Complete capability parsing (brightness range, color temp, segment count, music modes, etc.)
 - Safe command builders — invalid values are rejected **before** hitting the network
-- No API key in source code (uses `GOVEE_API_KEY` env var)
 - Ready for CLI tools, Home Assistant, servers, or automation
 
 Tested with:
