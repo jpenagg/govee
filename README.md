@@ -2,8 +2,8 @@
 
 **A clean, type-safe Go client for the official Govee Open API**
 
-[![Go](https://github.com/jpenagg/govee-go/actions/workflows/go.yml/badge.svg)](https://github.com/jpenagg/govee-go/actions/workflows/go.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/jpenagg/govee-go.svg)](https://pkg.go.dev/github.com/jpenagg/govee-go)
+[![Go](https://github.com/jpenagg/govee/actions/workflows/go.yml/badge.svg)](https://github.com/jpenagg/govee/actions/workflows/go.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/jpenagg/govee.svg)](https://pkg.go.dev/github.com/jpenagg/govee)
 
 Control your Govee lights from Go — fully typed, automatically validated, no hardcoded keys.
 
