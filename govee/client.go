@@ -1,16 +1,34 @@
+// govee/client.go
 package govee
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 )
 
+// Client is the main entry point for interacting with Govee devices.
 type Client struct {
 	APIKey     string
 	HTTPClient *http.Client
 }
+
+// NewClient creates a new Govee client with the given API key.
+func NewClient(apiKey string) *Client {
+	return &Client{
+		APIKey: apiKey,
+		HTTPClient: &http.Client{
+			Timeout: 15 * time.Second,
+		},
+	}
+}
+
+// ========================================
+// Response structs (full capability parsing)
+// ========================================
 
 type DevicesResponse struct {
 	Code    int      `json:"code"`
@@ -20,7 +38,7 @@ type DevicesResponse struct {
 
 type Device struct {
 	SKU        string       `json:"sku"`
-	Device     string       `json:"device"`
+	Device     string       `json:"device"`     // MAC address
 	DeviceName string       `json:"deviceName"`
 	Type       string       `json:"type"`
 	Capabilities []Capability `json:"capabilities"`
@@ -33,11 +51,11 @@ type Capability struct {
 }
 
 type CapabilityParameters struct {
-	DataType  string   `json:"dataType"`
-	Unit      string   `json:"unit,omitempty"`
-	Range     *Range   `json:"range,omitempty"`
-	Options   []Option `json:"options,omitempty"`
-	Fields    []Field  `json:"fields,omitempty"`
+	DataType  string    `json:"dataType"`
+	Unit      string    `json:"unit,omitempty"`
+	Range     *Range    `json:"range,omitempty"`
+	Options   []Option  `json:"options,omitempty"`
+	Fields    []Field   `json:"fields,omitempty"`
 }
 
 type Range struct {
@@ -66,15 +84,16 @@ type Size struct {
 	Max int `json:"max"`
 }
 
-func NewClient(apiKey string) *Client {
-	return &Client{
-		APIKey: apiKey,
-		HTTPClient: &http.Client{Timeout: 10 * time.Second},
-	}
-}
+// ========================================
+// Public API
+// ========================================
 
+// GetDevices fetches all devices linked to your account.
 func (c *Client) GetDevices() (*DevicesResponse, error) {
-	req, _ := http.NewRequest("GET", "https://openapi.api.govee.com/router/api/v1/user/devices", nil)
+	req, err := http.NewRequest("GET", "https://openapi.api.govee.com/router/api/v1/user/devices", nil)
+	if err != nil {
+		return nil, err
+	}
 	req.Header.Set("Govee-API-Key", c.APIKey)
 
 	resp, err := c.HTTPClient.Do(req)
@@ -84,15 +103,4 @@ func (c *Client) GetDevices() (*DevicesResponse, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
-	}
-
-	var result DevicesResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
-	}
-	if result.Code != 200 {
-		return nil, fmt.Errorf("API error %d: %s", result.Code, result.Message)
-	}
-	return &result, nil
-}
+		return nil, fmt.Errorf("HTTP %d",

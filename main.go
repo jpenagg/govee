@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"govee-devices/govee"
+	"govee/govee"
 
 	"github.com/olekukonko/tablewriter"
 )
